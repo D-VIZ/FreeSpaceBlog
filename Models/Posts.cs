@@ -1,4 +1,5 @@
-﻿using Microsoft.AspNetCore.Mvc.RazorPages;
+﻿using Microsoft.AspNetCore.Identity;
+using Microsoft.AspNetCore.Mvc.RazorPages;
 using System.ComponentModel;
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
@@ -21,6 +22,7 @@ namespace FreeSpace.Models
         public string? Description { get; set; }
 
         [DataType(DataType.Date)]
+        [DisplayFormat(DataFormatString = "{0:dd/MM/yyyy HH:mm}", ApplyFormatInEditMode = false)]
         [Display(Name = "Postado em:")]
         public DateTime CreatedDate { get; set; }
 
@@ -31,5 +33,9 @@ namespace FreeSpace.Models
         public string? MediaPath { get; set; }
 
         public int Likes { get; set; } = 0;
+
+        public string? UserId { get; set; }
+
+        public ApplicationUser? User { get; set; }
     }
 }

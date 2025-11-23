@@ -2,15 +2,17 @@
 @model FreeSpace.Pages.Posts.IndexModel
 @using Microsoft.AspNetCore.Identity
 @inject SignInManager<FreeSpace.Models.ApplicationUser> SignInManager
+@Html.AntiForgeryToken()
 @{
     ViewData["Title"] = "Index";
 }
+
 <form method="post" enctype="multipart/form-data">
 
     <div class="row mb-3">
         <div class="col-5">
             <div class="d-flex gap-2 mb-2">
-                <label asp-for="Post.Title" class="control-label me-3"></label>
+                <label asp-for="Post.Title" class="control-label me-3 fw-bold"></label>
                 <input asp-for="Post.Title" class="form-control form-control-sm" type="text"/>
             </div>
                 <span asp-validation-for="Post.Title" class="text-danger"></span>
@@ -25,7 +27,7 @@
         
         <div class="mb-3">
             <label asp-for="Post.Media" class="form-label"></label>
-            <input class="form-control form-control-sm" type="file" id="formFile">
+            <input asp-for="Post.Media" class="form-control form-control-sm" type="file" id="formFile">
         </div>
     </div>
 
@@ -38,15 +40,52 @@
 
 <hr />
 
+@foreach(var i in Model.Posts)
+{
+    <div>
+        <div>
+            <p><small>Postado por: @i.User?.UserName</small></p>
+        </div>
+        <div class="fw-bold mb-3">
+            @Html.DisplayFor(p => i.Title)
+        </div> 
+        <div class="mb-3">
+            @Html.DisplayFor(p => i.Description)
+        </div>
+        @if(i.MediaPath != null)
+        {
+            var ext = System.IO.Path.GetExtension(i.MediaPath).ToLower();
+            if (ext == ".jpg" || ext == ".jpeg" || ext == ".png" || ext == ".gif")
+            {
+                <div class="mb-3 d-flex justify-content-center align-items-center min-vh-10 bg-dark img-fluid rounded">
+                    <img src="@i.MediaPath" alt="Image" class="img-fluid rounded" style="max-width: 600px; max-height: 600px;" />
+                </div>
+            }
+            else if (ext == ".mp4" || ext == ".webm" || ext == ".ogg")
+            {
+                <div class="mb-3 d-flex justify-content-center align-items-center min-vh-10 bg-dark img-fluid rounded">
+                    <video controls width="600" height="600">
+                        <source src="@i.MediaPath" type="video/mp4"/>
+                     <video/>
+                </div>
+            }
+        }
 
-@if (SignInManager.IsSignedIn(User))
-{
-    <p>Logado como @User.Identity.Name</p>
-    <form method="post" asp-page-handler="Logout">
-        <input type="submit" value="Sair" class="btn btn-danger"/>
-    </form>
-}
-else
-{
-    <p>Não está logado.</p>
+        <div class="d-flex gap-2 mb-2">
+            <form method="post" asp-page-handler="Like" asp-route-id="@i.Id">
+                <button id="likeBtn" type="submit" class="btn p-0 border-0 bg-transparent" style="color: red;">
+                    <img src="/imgsLayout/heart-empty.png" style="width:20px; height:20px;" />
+                </button>
+
+            </form>
+            <span>@i.Likes</span>
+        </div>
+        <div>
+            <form method="post" asp-page-handler="Delete" asp-route-id="@i.Id">
+                <input type="submit" value="Excluir" class="btn-sm btn-danger btn-sm"/>
+            </form> 
+        </div>
+    </div>
+
+    <hr />
 }
