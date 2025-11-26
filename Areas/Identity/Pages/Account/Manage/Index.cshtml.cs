@@ -30,7 +30,6 @@ namespace FreeSpace.Areas.Identity.Pages.Account.Manage
         ///     This API supports the ASP.NET Core Identity default UI infrastructure and is not intended to be used
         ///     directly from your code. This API may change or be removed in future releases.
         /// </summary>
-        public string Username { get; set; }
 
         /// <summary>
         ///     This API supports the ASP.NET Core Identity default UI infrastructure and is not intended to be used
@@ -59,6 +58,14 @@ namespace FreeSpace.Areas.Identity.Pages.Account.Manage
             [Phone]
             [Display(Name = "Phone number")]
             public string PhoneNumber { get; set; }
+
+            public IFormFile Photo { get; set; }
+
+            public string PhotoPath { get; set; }
+
+            [Required]
+            [StringLength(20,MinimumLength = 4)]
+            public string Username { get; set; }
         }
 
         private async Task LoadAsync(ApplicationUser user)
@@ -66,11 +73,10 @@ namespace FreeSpace.Areas.Identity.Pages.Account.Manage
             var userName = await _userManager.GetUserNameAsync(user);
             var phoneNumber = await _userManager.GetPhoneNumberAsync(user);
 
-            Username = userName;
-
             Input = new InputModel
             {
-                PhoneNumber = phoneNumber
+                PhoneNumber = phoneNumber,
+                Username = userName
             };
         }
 
@@ -88,6 +94,7 @@ namespace FreeSpace.Areas.Identity.Pages.Account.Manage
 
         public async Task<IActionResult> OnPostAsync()
         {
+
             var user = await _userManager.GetUserAsync(User);
             if (user == null)
             {
@@ -111,6 +118,27 @@ namespace FreeSpace.Areas.Identity.Pages.Account.Manage
                 }
             }
 
+            var username = await _userManager.GetUserNameAsync(user);
+            if (Input.Username != username)
+            {
+                await _userManager.SetUserNameAsync(user, Input.Username);
+            }
+
+            var photo = Input.Photo;
+
+            if (photo != null)
+            {
+                var fileName = Guid.NewGuid() + Path.GetExtension(Input.Photo.FileName);
+                var filePath = Path.Combine("wwwroot/userfiles/profilepic/" + fileName);
+
+                using var stream = System.IO.File.Create(filePath);
+                await photo.CopyToAsync(stream);
+
+                user.PhotoPath = "/userfiles/profilepic/" + fileName;
+            }
+
+
+            await _userManager.UpdateAsync(user);
             await _signInManager.RefreshSignInAsync(user);
             StatusMessage = "Your profile has been updated";
             return RedirectToPage();

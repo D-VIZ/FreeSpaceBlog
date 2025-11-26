@@ -105,7 +105,10 @@ namespace FreeSpace.Areas.Identity.Pages.Account
 
             [Required]
             public string UserName { get; set; }
-            
+
+            public IFormFile Photo { get; set; }
+
+            public string PhotoPath { get; set; }
         }
 
 
@@ -124,7 +127,21 @@ namespace FreeSpace.Areas.Identity.Pages.Account
 
                 var user = CreateUser();
 
+                var photo = Input.Photo;
+
+                if (photo != null)
+                {
+                    var fileName = Guid.NewGuid() + Path.GetExtension(Input.Photo.FileName);
+                    var filePath = Path.Combine("wwwroot/userfiles/profilepic/" + fileName);
+
+                    using var stream = System.IO.File.Create(filePath);
+                    await photo.CopyToAsync(stream);
+
+                    user.PhotoPath = "/userfiles/profilepic/" + fileName;
+                }
+
                 user.FullName = Input.FullName;
+                //user.PhotoPath = Input.PhotoPath;
 
                 await _userStore.SetUserNameAsync(user, Input.UserName, CancellationToken.None);
                 await _emailStore.SetEmailAsync(user, Input.Email, CancellationToken.None);

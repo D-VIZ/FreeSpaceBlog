@@ -2,6 +2,7 @@
 @model FreeSpace.Pages.Posts.IndexModel
 @using Microsoft.AspNetCore.Identity
 @inject SignInManager<FreeSpace.Models.ApplicationUser> SignInManager
+@inject UserManager<FreeSpace.Models.ApplicationUser> UserManager
 @Html.AntiForgeryToken()
 @{
     ViewData["Title"] = "Index";
@@ -9,23 +10,23 @@
 
 <form method="post" enctype="multipart/form-data">
 
-    <div class="row mb-3">
+    <div class="row mb-1">
         <div class="col-5">
-            <div class="d-flex gap-2 mb-2">
-                <label asp-for="Post.Title" class="control-label me-3 fw-bold"></label>
+            <div class="d-flex gap-2 mb-1">
+                <label asp-for="Post.Title" class="control-label me-3"></label>
                 <input asp-for="Post.Title" class="form-control form-control-sm" type="text"/>
             </div>
                 <span asp-validation-for="Post.Title" class="text-danger"></span>
         </div>
         <div>
-            <div class="mb-3">
+            <div class="mb-1">
                 <label asp-for="Post.Description" class="control-label mb-2"></label>
                 <textarea asp-for="Post.Description" class="form-control form-control" rows="5" type="text"></textarea>
             </div>
                 <span asp-validation-for="Post.Description" class="text-danger"></span>
         </div>
         
-        <div class="mb-3">
+        <div class="mb-2">
             <label asp-for="Post.Media" class="form-label"></label>
             <input asp-for="Post.Media" class="form-control form-control-sm" type="file" id="formFile">
         </div>
@@ -43,13 +44,14 @@
 @foreach(var i in Model.Posts)
 {
     <div>
-        <div>
-            <p><small>Postado por: @i.User?.UserName</small></p>
+        <div class="d-flex gap-2 mb-2">
+            <img src="@i.User?.PhotoPath" alt="Image" class="rounded-circle me-2" style="max-width: 50px; max-height: 50px;"/>
+            <p><small>@i.User?.UserName</small></p>
         </div>
-        <div class="fw-bold mb-3">
+        <div class="fw-bold mb-2 fs-4">
             @Html.DisplayFor(p => i.Title)
         </div> 
-        <div class="mb-3">
+        <div class="mb-3 fs-6">
             @Html.DisplayFor(p => i.Description)
         </div>
         @if(i.MediaPath != null)
@@ -57,34 +59,38 @@
             var ext = System.IO.Path.GetExtension(i.MediaPath).ToLower();
             if (ext == ".jpg" || ext == ".jpeg" || ext == ".png" || ext == ".gif")
             {
-                <div class="mb-3 d-flex justify-content-center align-items-center min-vh-10 bg-dark img-fluid rounded">
-                    <img src="@i.MediaPath" alt="Image" class="img-fluid rounded" style="max-width: 600px; max-height: 600px;" />
+                <div class="mb-3 d-flex justify-content-center align-items-center min-vh-10 bg-dark img-fluid rounded-4">
+                    <img src="@i.MediaPath" alt="Image" class="img-fluid" style="max-width: 600px; max-height: 600px; rounded" />
                 </div>
             }
             else if (ext == ".mp4" || ext == ".webm" || ext == ".ogg")
             {
-                <div class="mb-3 d-flex justify-content-center align-items-center min-vh-10 bg-dark img-fluid rounded">
+                <div class="mb-3 d-flex justify-content-center align-items-center min-vh-10 bg-dark img-fluid rounded-4">
                     <video controls width="600" height="600">
                         <source src="@i.MediaPath" type="video/mp4"/>
-                     <video/>
+                     </video>
                 </div>
             }
         }
 
         <div class="d-flex gap-2 mb-2">
             <form method="post" asp-page-handler="Like" asp-route-id="@i.Id">
-                <button id="likeBtn" type="submit" class="btn p-0 border-0 bg-transparent" style="color: red;">
+                <button id="likeBtn" type="submit" class="btn p-0 border-0 bg-transparent">
                     <img src="/imgsLayout/heart-empty.png" style="width:20px; height:20px;" />
                 </button>
 
             </form>
             <span>@i.Likes</span>
         </div>
-        <div>
-            <form method="post" asp-page-handler="Delete" asp-route-id="@i.Id">
-                <input type="submit" value="Excluir" class="btn-sm btn-danger btn-sm"/>
-            </form> 
-        </div>
+        @if(i.UserId == UserManager.GetUserId(User))
+        {
+            <div>
+                <form method="post" asp-page-handler="Delete" asp-route-id="@i.Id">
+                    <input type="submit" value="Excluir" class="btn-sm btn-danger btn-sm"/>
+                </form> 
+            </div>
+        }
+
     </div>
 
     <hr />

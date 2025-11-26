@@ -20,3 +20,28 @@ html {
 body {
   margin-bottom: 60px;
 }
+
+.rounded-0 {
+    border-radius: 0 !important;
+}
+
+.rounded-1 {
+    border-radius: 0.125rem !important;
+}
+/* pequeno */
+.rounded-2 {
+    border-radius: 0.25rem !important;
+}
+/* mediano */
+.rounded-3 {
+    border-radius: 0.5rem !important;
+}
+/* padrão bootstrap */
+.rounded-4 {
+    border-radius: 0.75rem !important;
+}
+/* maior */
+.rounded-5 {
+    border-radius: 1rem !important;
+}
+/* bem arredondado */

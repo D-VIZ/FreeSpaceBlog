@@ -34,7 +34,7 @@ namespace FreeSpace.Pages.Posts
 
         public async Task OnGetAsync()
         {
-            Posts = await _context.Posts.Include(p => p.User).ToListAsync();
+            Posts = await _context.Posts.Include(p => p.User).OrderByDescending(p => p.CreatedDate).ToListAsync();
         }
 
         public async Task<IActionResult> OnPostAsync()
@@ -50,7 +50,7 @@ namespace FreeSpace.Pages.Posts
 
             if (!ModelState.IsValid || _context.Posts == null)
             {
-                Posts = await _context.Posts.Include(p => p.User).ToListAsync();
+                Posts = await _context.Posts.Include(p => p.User).OrderByDescending(p => p.CreatedDate).ToListAsync();
                 return Page();
             }
             if(Post.Media != null)
