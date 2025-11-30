@@ -56,14 +56,16 @@ namespace FreeSpace.Areas.Identity.Pages.Account.Manage
             ///     directly from your code. This API may change or be removed in future releases.
             /// </summary>
             [Phone]
-            [Display(Name = "Phone number")]
+            [Display(Name = "Número de telefone")]
             public string PhoneNumber { get; set; }
 
+            [Display(Name = "Foto")]
             public IFormFile Photo { get; set; }
 
             public string PhotoPath { get; set; }
 
             [Required]
+            [Display(Name ="Usuário")]
             [StringLength(20,MinimumLength = 4)]
             public string Username { get; set; }
         }

@@ -45,3 +45,61 @@ body {
     border-radius: 1rem !important;
 }
 /* bem arredondado */
+.background-fs {
+    background: #424242;
+    background: linear-gradient(120deg,rgba(66, 66, 66, 1) 0%, rgba(18, 18, 18, 1) 50%, rgba(79, 79, 79, 1) 100%);
+    background-attachment: fixed;
+}
+
+.background-fsnav {
+    background: #4d198a;
+    background: linear-gradient(160deg,rgba(73, 39, 112, 1) 0%, rgba(20, 20, 20, 1) 100%);
+}
+.bg-post {
+    background-color: #000f;
+}
+
+.button-send {
+    padding: 6px 20px;
+    border-radius: 10px;
+    cursor: pointer;
+    border: 0;
+    background-color: white;
+    box-shadow: rgb(0 0 0 / 5%) 0 0 8px;
+    letter-spacing: 1.5px;
+    /*text-transform: uppercase;*/
+    font-size: 15px;
+    transition: all 0.5s ease;
+}
+
+    .button-send:hover {
+        letter-spacing: 3px;
+        background-color: #7f01b6;
+        color: hsl(0, 0%, 100%);
+        box-shadow: rgb(93 24 220) 0px 7px 29px 0px;
+    }
+
+/*    .button-send:active {
+        letter-spacing: 3px;
+        background-color: hsl(261deg 80% 48%);
+        color: hsl(0, 0%, 100%);
+        box-shadow: rgb(93 24 220) 0px 0px 0px 0px;
+        transform: translateY(10px);
+        transition: 100ms;
+    }*/
+
+.user-avatar {
+    width: 45px;
+    height: 45px;
+    object-fit: cover; /* mantém o corte centralizado */
+    display: block; /* evita problemas de baseline */
+}
+
+.nav-link.p-0 { /* remove padding do .nav-link que desloca a linha */
+    padding: 0 !important;
+}
+
+/* opcional: ajustar espaçamento se quiser */
+.user-name {
+    line-height: 1; /* evitar diferenças estranhas de altura com o avatar */
+}

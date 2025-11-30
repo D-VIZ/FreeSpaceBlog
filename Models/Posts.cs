@@ -12,8 +12,8 @@ namespace FreeSpace.Models
         [Key]
         public int Id { get; set; }
 
-        [Required]
-        [StringLength(30, MinimumLength = 4)]
+        [Required(ErrorMessage = "O campo título deve estar preenchido")]
+        [StringLength(30, MinimumLength = 4, ErrorMessage = "O campo deve ter no mínimo 4 caracteres e no máximo 30")]
         [DisplayName("Título")]
         public string Title { get; set; }
 

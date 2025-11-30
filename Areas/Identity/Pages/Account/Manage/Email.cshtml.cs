@@ -70,7 +70,7 @@ namespace FreeSpace.Areas.Identity.Pages.Account.Manage
             /// </summary>
             [Required]
             [EmailAddress]
-            [Display(Name = "New email")]
+            [Display(Name = "Novo Email")]
             public string NewEmail { get; set; }
         }
 

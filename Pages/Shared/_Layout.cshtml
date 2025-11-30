@@ -1,5 +1,9 @@
 ﻿@using Microsoft.AspNetCore.Identity
 @inject SignInManager<FreeSpace.Models.ApplicationUser> SignInManager
+@inject UserManager<FreeSpace.Models.ApplicationUser> UserManager
+@{
+    var currentUser = await UserManager.GetUserAsync(User);
+}
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -10,9 +14,9 @@
     <link rel="stylesheet" href="~/css/site.css" asp-append-version="true" />
     <link rel="stylesheet" href="~/FreeSpace.styles.css" asp-append-version="true" />
 </head>
-<body class="bg-secondary text-light">
+<body class="background-fs text-light">
     <header>
-        <nav class="navbar navbar-expand-sm navbar-toggleable-sm bg-dark border-bottom box-shadow mb-3 text-light">
+        <nav class="navbar navbar-expand-sm navbar-toggleable-sm bg-dark background-fsnav border-bottom box-shadow mb-3 text-light">
             <div class="container">
                 <a class="navbar-brand text-light fw-bold" asp-area="" asp-page="/Index">FreeSpace</a>
                 <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target=".navbar-collapse" aria-controls="navbarSupportedContent"
@@ -39,9 +43,12 @@
                     else
                     {
                         <div class="d-flex align-items-center gap-2">
-                            <a class="nav-link" asp-area="Identity" asp-page="/Account/Manage/Index">@User.Identity.Name</a>
+                            <a class="nav-link d-inline-flex align-items-center p-0" asp-area="Identity" asp-page="/Account/Manage/Index">
+                                 <img src="@currentUser?.PhotoPath" alt="Avatar" style="width:45px; height:45px;" class="rounded-circle me-3">
+                                 <span class="user-name">@User.Identity?.Name</span>
+                                 </a>
                             <form method="post" asp-area="Identity" asp-page="/Account/Logout">
-                                <button type="submit" class="btn btn-sm fw-bold" style="color: red">Sair</button>
+                                <button type="submit" class="btn nav-link ms-4" style="color: red">Sair</button>
                             </form>
                         </div>     
                     }
@@ -50,7 +57,7 @@
         </nav>
     </header>
     <div class="container d-flex justify-content-center">
-        <main role="main" class="pb-3 col-12 col-md-8 col-lg-6">
+        <main role="main" class="pb-3 col-12 col-md-8 col-lg-6 ">
             @RenderBody()
         </main>
     </div>

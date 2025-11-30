@@ -11,7 +11,7 @@
 <form method="post" enctype="multipart/form-data">
 
     <div class="row mb-1">
-        <div class="col-5">
+        <div class="col-6">
             <div class="d-flex gap-2 mb-1">
                 <label asp-for="Post.Title" class="control-label me-3"></label>
                 <input asp-for="Post.Title" class="form-control form-control-sm" type="text"/>
@@ -34,7 +34,7 @@
 
 
     <div>
-        <input type="submit" value="Postar" class="btn btn-primary btn-sm"/>
+        <button type="submit" class="button-send mt-2">Postar</button>
     </div>
 
 </form>
@@ -47,6 +47,20 @@
         <div class="d-flex gap-2 mb-2">
             <img src="@i.User?.PhotoPath" alt="Image" class="rounded-circle me-2" style="max-width: 50px; max-height: 50px;"/>
             <p><small>@i.User?.UserName</small></p>
+            @if(i.CreatedDate.Date == DateTime.Today)
+            {
+                <div  class="col text-end">
+                    <p><small>@i.CreatedDate.ToString("HH:mm")</small></P>
+                </div>
+
+            }
+            else
+            {   
+                <div  class="col text-end">
+                    <p><small>@i.CreatedDate.ToString("dd/MM/yy")</small></p>
+                </div>
+
+            }
         </div>
         <div class="fw-bold mb-2 fs-4">
             @Html.DisplayFor(p => i.Title)
@@ -59,8 +73,8 @@
             var ext = System.IO.Path.GetExtension(i.MediaPath).ToLower();
             if (ext == ".jpg" || ext == ".jpeg" || ext == ".png" || ext == ".gif")
             {
-                <div class="mb-3 d-flex justify-content-center align-items-center min-vh-10 bg-dark img-fluid rounded-4">
-                    <img src="@i.MediaPath" alt="Image" class="img-fluid" style="max-width: 600px; max-height: 600px; rounded" />
+                <div class="mb-3 d-flex justify-content-center align-items-center min-vh-10 bg-post img-fluid rounded-4">
+                    <img src="@i.MediaPath" alt="Image" class="img-fluid rounded-3" style=" object-fit: contain; max-width: 650px; max-height: 650px; " />
                 </div>
             }
             else if (ext == ".mp4" || ext == ".webm" || ext == ".ogg")
