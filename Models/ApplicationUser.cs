@@ -12,6 +12,6 @@ namespace FreeSpace.Models
         [NotMapped]
         public IFormFile? Photo { get; set; }
 
-        public string? PhotoPath { get; set; }
+        public string? PhotoPath { get; set; } = "/userDefault.jpg";
     }
 }

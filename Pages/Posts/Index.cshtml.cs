@@ -95,6 +95,10 @@ namespace FreeSpace.Pages.Posts
 
         public async Task<IActionResult> OnPostLike(int id)
         {
+            if(!User.Identity.IsAuthenticated)
+            {
+                return RedirectToPage("/Account/Login", new { area = "Identity" });
+            }
             var post = await _context.Posts.FindAsync(id);
             if (post != null)
             {
