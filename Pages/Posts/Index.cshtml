@@ -45,11 +45,13 @@
 {
     <div>
         <div class="d-flex gap-2 mb-2">
-            <a class="" asp-page="./Profile" asp-route-id="@i.UserId">
+            <a class="text-decoration-none" asp-page="./Profile" asp-route-id="@i.UserId">
                 <img src="@(!string.IsNullOrEmpty(i.User.PhotoPath) ? i.User.PhotoPath : "/userDefault.jpg")" alt="Image" class="rounded-circle me-2" style="max-width: 50px; max-height: 50px;"/>
             </a>
 
             <p><small><b>@i.User?.UserName</b></small></p>
+
+
             @if(i.CreatedDate.Date == DateTime.Today)
             {
                 <div  class="col text-end">
@@ -59,11 +61,12 @@
             }
             else
             {   
-                <div  class="col text-end">
+                <div  class="col text-end text-muted">
                     <p><small>@i.CreatedDate.ToString("dd/MM/yy")</small></p>
                 </div>
 
             }
+
         </div>
         <div class="fw-bold mb-2 fs-4">
             @Html.DisplayFor(p => i.Title)
@@ -76,13 +79,13 @@
             var ext = System.IO.Path.GetExtension(i.MediaPath).ToLower();
             if (ext == ".jpg" || ext == ".jpeg" || ext == ".png" || ext == ".gif")
             {
-                <div class="mb-2 d-flex justify-content-center align-items-center min-vh-10 bg-post img-fluid rounded-4">
+                <div class="mb-3 d-flex justify-content-center align-items-center min-vh-10 bg-post img-fluid rounded-4">
                     <img src="@i.MediaPath" alt="Image" class="img-fluid rounded-3" style=" object-fit: contain; max-width: 650px; max-height: 600px; " />
                 </div>
             }
             else if (ext == ".mp4" || ext == ".webm" || ext == ".ogg")
             {
-                <div class="mb-2 d-flex justify-content-center align-items-center min-vh-10 bg-post img-fluid rounded-4">
+                <div class="mb-3 d-flex justify-content-center align-items-center min-vh-10 bg-post img-fluid rounded-4">
                     <video controls width="650" height="600">
                         <source src="@i.MediaPath" type="video/mp4"/>
                      </video>
@@ -91,52 +94,63 @@
         }
 
         <div class="d-flex gap-2 mb-2 align-items-center">
-
             <form method="post" asp-page-handler="Like" asp-route-id="@i.Id">
                 <button id="likeBtn" type="submit" class="btn p-0 border-0 bg-transparent">
                     <img src="/imgsLayout/heart-empty.png" style="width:25px; height:25px;" />
                 </button>
             </form>
             <span class="">@i.Likes</span>
-                <button id="commentBtn" type="button" onclick="toggleComment()" class="btn ms-3 p-0 border-0 bg-transparent">
-                    <img src="/imgsLayout/CommentPurple.png" style="width:25px; height:25px;" />
+                <button id="commentBtn" type="button" onclick="toggleComment(@i.Id)" class="btn ms-3 p-0 border-0 bg-transparent">
+                    <img src="/imgsLayout/CommentWhite.png" style="width:25px; height:25px;" />
                 </button>
+            @if(i.UserId == UserManager.GetUserId(User))
+            {
+                <div class="col text-end">
+                    <form method="post" asp-page-handler="Delete" asp-route-id="@i.Id">
+                        <input type="submit" value="Excluir" class="btn-sm btn-danger btn-sm"/>
+                    </form> 
+                </div>
+            }
 
         </div>
-                <div id="commentBox" style="display:none;" class="mt-3">
-                    <form method="post" asp-page-handler="AddComment">
-                        <textarea name="commentBtn" style="resize:none; width:600px;" class="form-control col-3" rows="5" placeholder="Escreva seu comentário..."></textarea>
+                <div id="commentBox-@i.Id" style="display:none;" class="mt-3">
+
+                @if (i.Comments != null && i.Comments.Any())
+                {
+                    @foreach (var c in i.Comments.OrderByDescending(c => c.CreatedDate))
+                    {
+                        <div class="mb-2">
+                            <a class="text-decoration-none" asp-page="./Profile" asp-route-id="@i.UserId">
+                                <img src="@(!string.IsNullOrEmpty(c.User.PhotoPath) ? c.User.PhotoPath : "/userDefault.jpg")" alt="Image" class="rounded-circle me-2" style="max-width: 50px; max-height: 50px;"/>
+                            </a>
+                            <span>@c.User?.UserName</span>
+                            <div class="mt-2">@c.Text</div>
+                            <small class="text-muted">@c.CreatedDate.ToString("g")</small>
+                            <hr />
+                        </div>
+                    }
+                }
+                else
+                {
+                    <p class="text-muted">Sem comentários</p>
+                }
+                    
+                    <form method="post" asp-page-handler="AddComment" asp-route-PostId="@i.Id">
+                        <textarea name="commentText" maxlength="300" style="resize:none; width:600px;" class="form-control col-3" rows="5" placeholder="Escreva seu comentário..."></textarea>
                         <button type="submit" class="button-send mt-3">Enviar</button>
                     </form>
                 </div>
 
-
-            <script>
-                function toggleComment() {
-                    const box = document.getElementById("commentBox");
-                    box.style.display = box.style.display === "none" ? "block" : "none";
-                }
-            </script>
-@*             <div class="ms-2">
-             <button id="commentBtn" type="submit" class="btn p-0 border-0 bg-transparent">
-                <img src="/imgsLayout/CommentPurple.png" style="width:25px; height:25px;" />
-            </button>
-            </div> *@
-
-@*             <form>
-                <textarea asp-for="" type="text" placeholder="Escreva aqui seu comentario"></textarea>
-            </form> *@
-
-        @if(i.UserId == UserManager.GetUserId(User))
-        {
-            <div class="ms-auto">
-                <form method="post" asp-page-handler="Delete" asp-route-id="@i.Id">
-                    <input type="submit" value="Excluir" class="btn-sm btn-danger btn-sm"/>
-                </form> 
-            </div>
-        }
         </div>
 
 
     <hr class="hr"/>
 }
+
+                        
+<script>
+    function toggleComment(postId) {
+        const box = document.getElementById("commentBox-" + postId);
+        box.style.display = box.style.display === "none" ? "block" : "none";
+    }
+</script>

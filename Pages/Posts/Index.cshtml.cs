@@ -30,11 +30,16 @@ namespace FreeSpace.Pages.Posts
         [BindProperty]
         public Post Post { get; set; } = default!;
 
+        [BindProperty]
+        public string commentText { get; set; } = default!;
+
         public IList<Post> Posts { get; set; } = new List<Post>();
+
+        public Comment Comment { get; set; } = default!;
 
         public async Task OnGetAsync()
         {
-            Posts = await _context.Posts.Include(p => p.User).OrderByDescending(p => p.CreatedDate).ToListAsync();
+            Posts = await _context.Posts.Include(p => p.User).Include(p => p.Comments).OrderByDescending(p => p.CreatedDate).ToListAsync();
         }
 
         public async Task<IActionResult> OnPostAsync()
@@ -108,6 +113,33 @@ namespace FreeSpace.Pages.Posts
             }
 
             return Page();
+        }
+
+        public async Task<IActionResult> OnPostAddCommentAsync(int PostId)
+        {
+            if (!User.Identity.IsAuthenticated)
+            {
+                return RedirectToPage("/Account/Login", new { area = "Identity" });
+            }
+
+            Post post = await _context.Posts.FindAsync(PostId);
+
+            Comment = new Comment
+            {
+                Text = commentText,
+                CreatedDate = DateTime.Now,
+                UserId = _userManager.GetUserId(User),
+                PostId = PostId
+            };
+
+            if (post != null)
+            {
+                _context.Comments.Add(Comment);
+                await _context.SaveChangesAsync();
+            }
+
+
+            return RedirectToPage();
         }
     }
 }

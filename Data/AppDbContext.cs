@@ -11,8 +11,6 @@ namespace FreeSpace.Data
         {
         }
         public DbSet<Post> Posts { get; set; } = default!;
-
-        // Suas tabelas normais depois:
-        // public DbSet<Filme> Filmes { get; set; }
+        public DbSet<Comment> Comments { get; set; } = default!;
     }
 }

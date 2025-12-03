@@ -148,7 +148,12 @@ body {
     }
 
 .hr {
-    border: 1.5px solid #b47ae6;
+    display: block;
+    border: none !important;
+    height: 2px !important;
+    background-color: #b47ae6 !important;
+    border-radius: 20 px;
+    opacity: 1 !important; /* evita ficar transparente */
 }
 
 .align-r{
