@@ -10,6 +10,8 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using System.IO;
+using System.ComponentModel.DataAnnotations;
+using System.ComponentModel.DataAnnotations.Schema;
 
 namespace FreeSpace.Pages.Posts
 {
@@ -31,7 +33,7 @@ namespace FreeSpace.Pages.Posts
         public Post Post { get; set; } = default!;
 
         [BindProperty]
-        public string commentText { get; set; } = default!;
+        public string CommentText { get; set; } = default!;
 
         public IList<Post> Posts { get; set; } = new List<Post>();
 
@@ -44,18 +46,20 @@ namespace FreeSpace.Pages.Posts
 
         public async Task<IActionResult> OnPostAsync()
         {
-
+            
             if (!User.Identity.IsAuthenticated)
             {
                 return RedirectToPage("/Account/Login", new { area = "Identity" });
             }
+
+            ModelState.Remove(nameof(CommentText));
 
             Post.UserId = _userManager.GetUserId(User);
             Post.CreatedDate = DateTime.Now;
 
             if (!ModelState.IsValid || _context.Posts == null)
             {
-                Posts = await _context.Posts.Include(p => p.User).OrderByDescending(p => p.CreatedDate).ToListAsync();
+                await RefreshInfo();
                 return Page();
             }
             if(Post.Media != null)
@@ -115,31 +119,51 @@ namespace FreeSpace.Pages.Posts
             return Page();
         }
 
-        public async Task<IActionResult> OnPostAddCommentAsync(int PostId)
+        public async Task<IActionResult> OnPostAddCommentAsync(int id)
         {
+            ModelState.Clear();
+
             if (!User.Identity.IsAuthenticated)
             {
                 return RedirectToPage("/Account/Login", new { area = "Identity" });
             }
 
-            Post post = await _context.Posts.FindAsync(PostId);
+
+            if (string.IsNullOrWhiteSpace(CommentText))
+            {
+                ModelState.AddModelError(nameof(CommentText), "Comentário não pode ficar vazio.");
+                await RefreshInfo();
+                return Page();
+            }
+            if (CommentText.Length > 300)
+            {
+                ModelState.AddModelError(nameof(CommentText), "O comentário não pode ter mais de 300 caracteres.");
+                await RefreshInfo();
+                return Page();
+            }
+
+            Post post = await _context.Posts.FindAsync(id);
 
             Comment = new Comment
             {
-                Text = commentText,
+                Text = CommentText,
                 CreatedDate = DateTime.Now,
                 UserId = _userManager.GetUserId(User),
-                PostId = PostId
+                PostId = id
             };
 
-            if (post != null)
-            {
-                _context.Comments.Add(Comment);
-                await _context.SaveChangesAsync();
-            }
 
+            _context.Comments.Add(Comment);
+            await _context.SaveChangesAsync();
+
+            CommentText = string.Empty;
 
             return RedirectToPage();
+        }
+
+        private async Task RefreshInfo()
+        {
+            Posts = await _context.Posts.Include(p => p.User).Include(p => p.Comments).OrderByDescending(p => p.CreatedDate).ToListAsync();
         }
     }
 }

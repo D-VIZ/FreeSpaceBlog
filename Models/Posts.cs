@@ -30,6 +30,9 @@ namespace FreeSpace.Models
         [Display(Name = "Mídia")]
         public IFormFile? Media { get; set; }
 
+        [Required]
+        public string Tag { get; set; } = "Geral";
+
         public string? MediaPath { get; set; }
 
         public int Likes { get; set; } = 0;

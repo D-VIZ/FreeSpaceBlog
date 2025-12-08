@@ -22,6 +22,7 @@
             <div class="mb-1">
                 <label asp-for="Post.Description" class="control-label mb-2"></label>
                 <textarea asp-for="Post.Description" class="form-control form-control" rows="5" type="text"></textarea>
+                <span asp-validation-for="Post.Description" class="text-danger"></span>
             </div>
                 <span asp-validation-for="Post.Description" class="text-danger"></span>
         </div>
@@ -99,10 +100,11 @@
                     <img src="/imgsLayout/heart-empty.png" style="width:25px; height:25px;" />
                 </button>
             </form>
-            <span class="">@i.Likes</span>
-                <button id="commentBtn" type="button" onclick="toggleComment(@i.Id)" class="btn ms-3 p-0 border-0 bg-transparent">
-                    <img src="/imgsLayout/CommentWhite.png" style="width:25px; height:25px;" />
-                </button>
+            <span>@i.Likes</span>
+            <button id="commentBtn" type="button" onclick="toggleComment(@i.Id)" class="btn ms-3 p-0 border-0 bg-transparent">
+                <img src="/imgsLayout/CommentWhite.png" style="width:25px; height:25px;" />
+            </button>
+            <span>@i.Comments.Count()</span>
             @if(i.UserId == UserManager.GetUserId(User))
             {
                 <div class="col text-end">
@@ -135,9 +137,10 @@
                     <p class="text-muted">Sem comentários</p>
                 }
                     
-                    <form method="post" asp-page-handler="AddComment" asp-route-PostId="@i.Id">
-                        <textarea name="commentText" maxlength="300" style="resize:none; width:600px;" class="form-control col-3" rows="5" placeholder="Escreva seu comentário..."></textarea>
+                    <form method="post" asp-page-handler="AddComment" asp-route-id="@i.Id">
+                        <textarea name="CommentText" maxlength="300" style="resize:none; width:600px;" class="form-control col-3" rows="5" placeholder="Escreva seu comentário..."></textarea>
                         <button type="submit" class="button-send mt-3">Enviar</button>
+                        <span asp-validation-for="CommentText" class="text-danger"></span>
                     </form>
                 </div>
 

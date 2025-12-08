@@ -5,8 +5,9 @@ namespace FreeSpace.Models
     public class Comment
     {
         public int Id { get; set; }
+
         [Required(ErrorMessage = "O campo não pode estar vazio")]
-        [StringLength(300)]
+        [StringLength(300, ErrorMessage = "O campo não pode ter mais de 300 caracteres")]
         public string Text { get; set; }
         public DateTime CreatedDate { get; set; }
 
