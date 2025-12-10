@@ -37,14 +37,12 @@ namespace FreeSpace.Models
 
         public string? TagPath { get; set; }
 
-        public int Likes { get; set; } = 0;
-
         public string? UserId { get; set; }
 
         public ApplicationUser? User { get; set; }
 
         public ICollection<Comment> Comments { get; set; } = new List<Comment>();
 
-        public ICollection<Like> LikesList { get; set; } = new List<Like>();
+        public ICollection<Like> Likes { get; set; } = new List<Like>();
     }
 }

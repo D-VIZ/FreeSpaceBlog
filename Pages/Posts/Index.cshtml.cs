@@ -40,11 +40,13 @@ namespace FreeSpace.Pages.Posts
 
         public Comment Comment { get; set; } = default!;
 
+        public Like Like { get; set; } = default!;
+
         public SelectList Tags { get; set; } = new SelectList(new List<string> {"Geral", "Erro", "Dúvida", "Projeto Final", "Notícia", "Discussão","Estudo", "Tutorial"});
 
         public async Task OnGetAsync()
         {
-            Posts = await _context.Posts.Include(p => p.User).Include(p => p.Comments).ThenInclude(c => c.User).OrderByDescending(p => p.CreatedDate).ToListAsync();
+            Posts = await _context.Posts.Include(p => p.User).Include(p => p.Comments).ThenInclude(c => c.User).Include(p => p.Likes).ThenInclude(l => l.User).OrderByDescending(p => p.CreatedDate).ToListAsync();
         }
 
         public async Task<IActionResult> OnPostAsync()
@@ -113,14 +115,28 @@ namespace FreeSpace.Pages.Posts
                 return RedirectToPage("/Account/Login", new { area = "Identity" });
             }
             var post = await _context.Posts.FindAsync(id);
-            if (post != null)
+
+            var userId = _userManager.GetUserId(User);
+
+            var like = await _context.Likes.FirstOrDefaultAsync(l => l.PostId == id && l.UserId == userId);
+
+            if(like != null)
             {
-                post.Likes++;
-                await _context.SaveChangesAsync();
-                return RedirectToPage();
+                _context.Likes.Remove(like);
+            }
+            else
+            {
+                like = new Like
+                {
+                    PostId = id,
+                    UserId = userId
+                };
+                _context.Likes.Add(like);
             }
 
-            return Page();
+            await _context.SaveChangesAsync();
+            return RedirectToPage();
+
         }
 
         public async Task<IActionResult> OnPostAddCommentAsync(int id)
@@ -167,7 +183,7 @@ namespace FreeSpace.Pages.Posts
 
         private async Task RefreshInfo()
         {
-            Posts = await _context.Posts.Include(p => p.User).Include(p => p.Comments).ThenInclude(c => c.User).OrderByDescending(p => p.CreatedDate).ToListAsync();
+            Posts = await _context.Posts.Include(p => p.User).Include(p => p.Comments).ThenInclude(c => c.User).Include(p => p.Likes).ThenInclude(l => l.User).OrderByDescending(p => p.CreatedDate).ToListAsync();
         }
     }
 }
