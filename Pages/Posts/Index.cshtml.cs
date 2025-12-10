@@ -4,14 +4,15 @@ using FreeSpace.Models;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
+using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
 using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
-using System.IO;
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
+using System.IO;
+using System.Linq;
+using System.Threading.Tasks;
 
 namespace FreeSpace.Pages.Posts
 {
@@ -39,9 +40,11 @@ namespace FreeSpace.Pages.Posts
 
         public Comment Comment { get; set; } = default!;
 
+        public SelectList Tags { get; set; } = new SelectList(new List<string> {"Geral", "Erro", "Dúvida", "Projeto Final", "Notícia", "Discussão","Estudo", "Tutorial"});
+
         public async Task OnGetAsync()
         {
-            Posts = await _context.Posts.Include(p => p.User).Include(p => p.Comments).OrderByDescending(p => p.CreatedDate).ToListAsync();
+            Posts = await _context.Posts.Include(p => p.User).Include(p => p.Comments).ThenInclude(c => c.User).OrderByDescending(p => p.CreatedDate).ToListAsync();
         }
 
         public async Task<IActionResult> OnPostAsync()
@@ -76,6 +79,7 @@ namespace FreeSpace.Pages.Posts
             {
                 Post.Title = "UserId nao associado";
             }
+
 
             _context.Posts.Add(Post);
             await _context.SaveChangesAsync();
@@ -163,7 +167,7 @@ namespace FreeSpace.Pages.Posts
 
         private async Task RefreshInfo()
         {
-            Posts = await _context.Posts.Include(p => p.User).Include(p => p.Comments).OrderByDescending(p => p.CreatedDate).ToListAsync();
+            Posts = await _context.Posts.Include(p => p.User).Include(p => p.Comments).ThenInclude(c => c.User).OrderByDescending(p => p.CreatedDate).ToListAsync();
         }
     }
 }

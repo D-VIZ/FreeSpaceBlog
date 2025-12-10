@@ -146,6 +146,13 @@ namespace FreeSpace.Migrations
                     b.Property<string>("MediaPath")
                         .HasColumnType("nvarchar(max)");
 
+                    b.Property<string>("Tag")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("TagPath")
+                        .HasColumnType("nvarchar(max)");
+
                     b.Property<string>("Title")
                         .IsRequired()
                         .HasMaxLength(30)

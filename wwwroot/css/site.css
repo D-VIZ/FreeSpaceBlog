@@ -159,3 +159,83 @@ body {
 .align-r{
     justify-content: right;
 }
+
+
+.tag {
+    display: inline-block;
+    padding: 4px 10px;
+    border-radius: 4px;
+    border: 1px solid #ccc;
+    background: #424242;
+    line-height: 1;
+    vertical-align: middle;
+    margin-left: 12px;
+    margin-bottom: 15px;
+    opacity: 1;
+    transition: opacity 0.2s ease;
+    font-size: 14px;
+    font-weight: bold;
+    align-items:center;
+}
+
+    .tag:hover {
+        opacity: 0.7; 
+    }
+
+.tag-geral{
+    background-color: #006cff;
+}
+
+.tag-erro {
+    background-color: #f51010;
+    border-color: #ffffff;
+}
+
+.tag-duvida {
+    background-color: #b47ae6;
+    border-color: #ffffff;
+}
+
+.tag-projeto {
+    background-color: #f1700b;
+    border-color: #ffffff;
+}
+
+.tag-noticia {
+    background-color: #2804de;
+    border-color: #ffffff;
+}
+
+.tag-discussao {
+    background-color: #860092;
+    border-color: #ffffff;
+}
+
+.tag-estudo {
+    background-color: #66511e;
+    border-color: #ffffff;
+
+}
+
+.tag-tutorial {
+    background-color: #30c712;
+    border-color: #ffffff;
+}
+
+.tag-img {
+    width: 15px;
+    height: 15px;
+    margin-right: 6px;
+    color: #fff;
+    vertical-align: middle;
+}
+
+
+/*"Geral" = > "tag-geral",
+"Erro" = > "tag-erro",
+"Dúvida" = > "tag-duvida",
+"Projeto Final" = > "tag-projeto",
+"Notícia" = > "tag-noticia",
+"Discussão" = > "tag-discussao",
+"Estudo" = > "tag-estudo",
+"Tutorial" = > "tag-tutorial",*/

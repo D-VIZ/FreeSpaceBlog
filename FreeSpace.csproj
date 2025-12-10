@@ -20,6 +20,7 @@
 
   <ItemGroup>
     <Folder Include="wwwroot\imgsLayout\" />
+    <Folder Include="wwwroot\icon\" />
     <Folder Include="wwwroot\uploads\" />
     <Folder Include="wwwroot\userfiles\profilepic\" />
   </ItemGroup>

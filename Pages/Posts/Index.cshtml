@@ -11,12 +11,23 @@
 <form method="post" enctype="multipart/form-data">
 
     <div class="row mb-1">
-        <div class="col-6">
-            <div class="d-flex gap-2 mb-1">
-                <label asp-for="Post.Title" class="control-label me-3"></label>
-                <input asp-for="Post.Title" class="form-control form-control-sm" type="text"/>
+        <div>
+            <div class="row g-2">
+
+                <div class="col-5">
+                    <label asp-for="Post.Title" class="form-label"></label>
+                    <input asp-for="Post.Title" class="form-control form-control-sm" type="text"/>
+                    <span asp-validation-for="Post.Title" class="text-danger"></span>
+                </div>
+
+                <div class="col-5 ms-auto">
+                    <label asp-for="Post.Tag" class="form-label"></label>
+                    <select asp-for="Post.Tag" asp-items="Model.Tags" 
+                            class="form-control form-control-sm"></select>
+                    <span asp-validation-for="Post.Tag" class="text-danger"></span>
+                </div>
+
             </div>
-                <span asp-validation-for="Post.Title" class="text-danger"></span>
         </div>
         <div>
             <div class="mb-1">
@@ -26,7 +37,6 @@
             </div>
                 <span asp-validation-for="Post.Description" class="text-danger"></span>
         </div>
-        
         <div class="mb-2">
             <label asp-for="Post.Media" class="form-label"></label>
             <input asp-for="Post.Media" class="form-control form-control-sm" type="file" id="formFile">
@@ -45,17 +55,51 @@
 @foreach(var i in Model.Posts)
 {
     <div>
-        <div class="d-flex gap-2 mb-2">
+        <div class="d-flex gap-2 mb-2 align-items-center">
             <a class="text-decoration-none" asp-page="./Profile" asp-route-id="@i.UserId">
                 <img src="@(!string.IsNullOrEmpty(i.User.PhotoPath) ? i.User.PhotoPath : "/userDefault.jpg")" alt="Image" class="rounded-circle me-2" style="max-width: 50px; max-height: 50px;"/>
             </a>
 
             <p><small><b>@i.User?.UserName</b></small></p>
 
+            @{
+                string classeTag = i.Tag switch
+                {
+                    "Geral" => "tag-geral",
+                    "Erro" => "tag-erro",
+                    "Dúvida" => "tag-duvida",
+                    "Projeto Final" => "tag-projeto",
+                    "Notícia" => "tag-noticia",
+                    "Discussão" => "tag-discussao",
+                    "Estudo" => "tag-estudo",
+                    "Tutorial" => "tag-tutorial",
+                    _          => "tag-geral"
+                };
+                string tagImgPath = i.Tag switch
+                {
+                    "Geral" => "/icon/tag-geral.png",
+                    "Erro" => "/icon/tag-erro.png",
+                    "Dúvida" => "/icon/tag-duvida.png",
+                    "Projeto Final" => "/icon/tag-projeto.png",
+                    "Notícia" => "/icon/tag-noticia.png",
+                    "Discussão" => "/icon/tag-discussao.png",
+                    "Estudo" => "/icon/tag-estudo.png",
+                    "Tutorial" => "/icon/tag-tutorial.png",
+                    _ => "/icon/tag-geral.png"
+                };
+
+            }
+
+            <div class="d-flex tag @classeTag">
+                <img src="@tagImgPath" alt="Image" class="tag-img"/>
+                <span>@i.Tag</span>        
+            </div>
+            
+
 
             @if(i.CreatedDate.Date == DateTime.Today)
             {
-                <div  class="col text-end">
+                <div  class="col text-end text-muted">
                     <p><small>@i.CreatedDate.ToString("HH:mm")</small></P>
                 </div>
 
@@ -122,7 +166,7 @@
                     @foreach (var c in i.Comments.OrderByDescending(c => c.CreatedDate))
                     {
                         <div class="mb-2">
-                            <a class="text-decoration-none" asp-page="./Profile" asp-route-id="@i.UserId">
+                            <a class="text-decoration-none" asp-page="./Profile" asp-route-id="@c.UserId">
                                 <img src="@(!string.IsNullOrEmpty(c.User.PhotoPath) ? c.User.PhotoPath : "/userDefault.jpg")" alt="Image" class="rounded-circle me-2" style="max-width: 50px; max-height: 50px;"/>
                             </a>
                             <span>@c.User?.UserName</span>

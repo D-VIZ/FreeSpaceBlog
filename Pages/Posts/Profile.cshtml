@@ -13,9 +13,12 @@
         <span>@Model.user.UserName</span>
     </div>
 
-    <div class="ms-auto">
+    @if(Model.user?.Id == UserManager.GetUserId(User))
+    {
+     <div class="ms-auto">
         <a class="button-send nav-link" asp-area="Identity" asp-page="/Account/Manage/Index">Alterar dados</a>
     </div>
+    }    
 </div>
 
 

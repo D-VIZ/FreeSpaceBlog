@@ -35,6 +35,8 @@ namespace FreeSpace.Models
 
         public string? MediaPath { get; set; }
 
+        public string? TagPath { get; set; }
+
         public int Likes { get; set; } = 0;
 
         public string? UserId { get; set; }
@@ -42,5 +44,7 @@ namespace FreeSpace.Models
         public ApplicationUser? User { get; set; }
 
         public ICollection<Comment> Comments { get; set; } = new List<Comment>();
+
+        public ICollection<Like> LikesList { get; set; } = new List<Like>();
     }
 }
