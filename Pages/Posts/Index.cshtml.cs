@@ -46,7 +46,7 @@ namespace FreeSpace.Pages.Posts
 
         public async Task OnGetAsync()
         {
-            Posts = await _context.Posts.Include(p => p.User).Include(p => p.Comments).ThenInclude(c => c.User).Include(p => p.Likes).ThenInclude(l => l.User).OrderByDescending(p => p.CreatedDate).ToListAsync();
+            await RefreshInfo();
         }
 
         public async Task<IActionResult> OnPostAsync()
@@ -114,7 +114,6 @@ namespace FreeSpace.Pages.Posts
             {
                 return RedirectToPage("/Account/Login", new { area = "Identity" });
             }
-            var post = await _context.Posts.FindAsync(id);
 
             var userId = _userManager.GetUserId(User);
 

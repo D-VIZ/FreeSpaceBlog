@@ -5,7 +5,7 @@
 @inject UserManager<FreeSpace.Models.ApplicationUser> UserManager
 @Html.AntiForgeryToken()
 @{
-    ViewData["Title"] = "Index";
+    ViewData["Title"] = "Home";
 }
 
 <form method="post" enctype="multipart/form-data">
@@ -149,11 +149,11 @@
                 <img src="/imgsLayout/CommentWhite.png" style="width:25px; height:25px;" />
             </button>
             <span>@i.Comments.Count()</span>
-            @if(i.UserId == UserManager.GetUserId(User))
+            @if(i.UserId == UserManager.GetUserId(User) || User.IsInRole("Admin"))
             {
                 <div class="col text-end">
                     <form method="post" asp-page-handler="Delete" asp-route-id="@i.Id">
-                        <input type="submit" value="Excluir" class="btn-sm btn-danger btn-sm"/>
+                        <input type="submit" value="Excluir" class="button-delete"/>
                     </form> 
                 </div>
             }
