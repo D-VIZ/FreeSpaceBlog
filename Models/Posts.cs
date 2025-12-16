@@ -37,7 +37,8 @@ namespace FreeSpace.Models
 
         public string? TagPath { get; set; }
 
-        public string? Plataform { get; set; }
+        [DisplayName("Software")]
+        public string? Plataform { get; set; } = "Não especificado";
 
         public string? UserId { get; set; }
 

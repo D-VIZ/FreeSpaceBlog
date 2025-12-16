@@ -10,20 +10,26 @@
 
 <form method="post" enctype="multipart/form-data">
 
-    <div class="row mb-1">
+    <div>
         <div>
-            <div class="row g-2">
+            <div class="row">
 
-                <div class="col-5">
+                <div class="col justify-content-start">
                     <label asp-for="Post.Title" class="form-label"></label>
                     <input asp-for="Post.Title" class="form-control form-control-sm" type="text"/>
                     <span asp-validation-for="Post.Title" class="text-danger"></span>
                 </div>
 
-                <div class="col-5 ms-auto">
+                <div class="col justify-content-center">
+                    <label asp-for="Post.Plataform" class="form-label"></label>
+                    <select asp-items="Model.Plataformas" asp-for="Post.Plataform" class="form-select form-select-sm"></select>
+                    <span asp-validation-for="Post.Plataform" class="text-danger"></span>
+                </div>
+
+                <div class="col justify-content-end">
                     <label asp-for="Post.Tag" class="form-label"></label>
                     <select asp-for="Post.Tag" asp-items="Model.Tags" 
-                            class="form-control form-control-sm"></select>
+                            class="form-select form-select-sm"></select>
                     <span asp-validation-for="Post.Tag" class="text-danger"></span>
                 </div>
 
@@ -32,7 +38,7 @@
         <div>
             <div class="mb-1">
                 <label asp-for="Post.Description" class="control-label mb-2"></label>
-                <textarea asp-for="Post.Description" class="form-control form-control" rows="5" type="text"></textarea>
+                <textarea asp-for="Post.Description" class="form-control form-control" rows="5" type="text" style="resize: none;"></textarea>
                 <span asp-validation-for="Post.Description" class="text-danger"></span>
             </div>
                 <span asp-validation-for="Post.Description" class="text-danger"></span>
@@ -87,12 +93,43 @@
                     "Tutorial" => "/icon/tag-tutorial.png",
                     _ => "/icon/tag-geral.png"
                 };
+                 
+                string icoPath = i.Plataform switch
+                {
+                    "Blender" => "/icon/blender.png",
+                    "Autodesk Maya" => "/icon/maya.png",
+                    "Autodesk 3ds Max" => "/icon/3ds.png",
+                    "Cinema 4D" => "/icon/cinema4d.png",
+                    "ZBrush" => "/icon/zbrush.png",
+                    "Houdini" => "/icon/houdini.png",
+                    "SketchUp" => "/icon/sketchup.ico",
+                    "Modo" => "/icon/modo.png",
+                    "LightWave 3D" => "/icon/lightwave.png",
+                    "Rhinoceros (Rhino)" => "/icon/rhino.png",
+                    "Substance Painter" => "/icon/substance.png",
+                    "Unreal Engine" => "/icon/unreal.png",
+                    "Unity" => "/icon/unity.png",   
+                    "Marmoset Toolbag" => "/icon/marmoset.png",
+                    "Não especificado" => "/icon/tag-projeto.png",
+                    _ => "/icon/tag-projeto.png"
+                };
+        
 
             }
 
-            <div class="d-flex tag @classeTag">
-                <img src="@tagImgPath" alt="Image" class="tag-img"/>
-                <span>@i.Tag</span>        
+            <div class="d-flex">
+                <div class="tag @classeTag">
+                    <img src="@tagImgPath" alt="Image" class="tag-img"/>
+                    <span>@i.Tag</span> 
+                </div>
+                @if(i.Plataform != "Não especificado" && i.Plataform != null)
+                {
+                    <div class="tag tag-sft ms-3">
+                        <img src="@icoPath" alt="Image" class="tag-img"/>
+                        <span>@i.Plataform</span> 
+                    </div>    
+                }
+                                   
             </div>
             
 
@@ -125,13 +162,13 @@
             if (ext == ".jpg" || ext == ".jpeg" || ext == ".png" || ext == ".gif")
             {
                 <div class="mb-3 d-flex justify-content-center align-items-center min-vh-10 bg-post img-fluid rounded-4">
-                    <img src="@i.MediaPath" alt="Image" class="img-fluid rounded-3" style=" object-fit: contain; max-width: 760px; max-height: 650px; " />
+                    <img src="@i.MediaPath" alt="Image" class="img-fluid rounded-3 w-100" style=" object-fit: contain; max-width: 760px; max-height: 650px; " />
                 </div>
             }
             else if (ext == ".mp4" || ext == ".webm" || ext == ".ogg")
             {
                 <div class="mb-3 d-flex justify-content-center align-items-center min-vh-10 bg-post img-fluid rounded-4">
-                    <video controls width="760" height="650">
+                    <video controls width="760" height="650" class="w-100">
                         <source src="@i.MediaPath" type="video/mp4"/>
                      </video>
                 </div>

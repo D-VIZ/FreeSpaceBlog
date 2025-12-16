@@ -43,6 +43,22 @@ namespace FreeSpace.Pages
 
         public SelectList Tags { get; set; } = new SelectList(new List<string> {"Geral", "Erro", "Dúvida", "Projeto Final", "Notícia", "Discussão","Estudo", "Tutorial"});
 
+        public SelectList Plataformas = new SelectList(new List<string> {"Não especificado",
+            "Blender",
+            "Autodesk Maya",
+            "Autodesk 3ds Max",
+            "Cinema 4D",
+            "ZBrush",
+            "Houdini",
+            "SketchUp",
+            "Modo",
+            "LightWave 3D",
+            "Rhinoceros (Rhino)",
+            "Substance Painter",
+            "Unreal Engine",
+            "Unity",
+            "Marmoset Toolbag" });
+
         public async Task OnGetAsync()
         {
             await RefreshInfo();

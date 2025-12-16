@@ -233,7 +233,7 @@ body {
 }
 
 .tag-estudo {
-    background-color: #66511e;
+    background-color: #83895f;
     border-color: #ffffff;
 
 }
@@ -249,6 +249,12 @@ body {
     margin-right: 6px;
     color: #fff;
     vertical-align: middle;
+}
+
+.tag-sft {
+    background-color: #b47ae655;
+    border: 2px solid #ccc;
+    border-color: #b47ae6;
 }
 
 
