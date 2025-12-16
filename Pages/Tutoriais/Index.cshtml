@@ -1,0 +1,107 @@
+﻿@page
+@model FreeSpace.Pages.Posts.Tutoriais.TutoriaisModel
+@{
+    ViewData["Title"] = "Tutoriais";
+}
+
+<h1 class="d-flex justify-content-center">Tutoriais úteis</h1>
+
+<form method="post" enctype="multipart/form-data" asp-page-handler="Filter">
+    <div class="d-flex justify-content-center">
+        <div class="col-4 p-3">
+            <select name="plataforma" asp-items="Model.Plataformas" class="form-select form-select-sm"></select>
+        </div>
+
+        <div class="p-3 ms-3">
+            <button class=" btn btn-primary btn-sm">Buscar</button>
+        </div>
+        @if(User.IsInRole("Admin"))
+        {
+        <div class="p-3 ms-3">
+            <a asp-page="./Manage" class="btn btn-primary btn-sm">Gerenciar</a>
+        </div>    
+        }
+        
+    </div>       
+</form>
+
+<hr class="hr"/>
+
+@if(!Model.tutoriais.Any() || Model.tutoriais == null)
+{
+    <span class="text-muted">Nenhum tutorial para ser exibido</span>
+}
+
+@foreach(var t in Model.tutoriais)
+{
+    <div>
+        @{
+            string icoPath = t.Plataform switch
+            {
+                "Blender" => "/icon/blender.png",
+                "Autodesk Maya" => "/icon/maya.png",
+                "Autodesk 3ds Max" => "/icon/3ds.png",
+                "Cinema 4D" => "/icon/cinema4d.png",
+                "ZBrush" => "/icon/zbrush.png",
+                "Houdini" => "/icon/houdini.png",
+                "SketchUp" => "/icon/sketchup.ico",
+                "Modo" => "/icon/modo.png",
+                "LightWave 3D" => "/icon/lightwave.png",
+                "Rhinoceros (Rhino)" => "/icon/rhino.png",
+                "Substance Painter" => "/icon/substance.png",
+                "Unreal Engine" => "/icon/unreal.png",
+                "Unity" => "/icon/unity.png",   
+                "Marmoset Toolbag" => "/icon/marmoset.png",
+                "Não especificado" => "/icon/tag-projeto.png",
+                _ => "/icon/tag-projeto.png"
+            };
+        }
+        <div class="d-flex align-items-center mb-3 mt-3">
+            <img src="@icoPath" class="d-inline-block me-3" style="width:40px; height:40px;"/>
+            <span class="tag"><b>@t.Plataform</b></span>      
+        </div>
+        
+        <p>@t.Description</p>
+
+        @if(t.FilePath != null)
+        {
+            <iframe 
+                src="@t.FilePath"
+                style="width:100%; height:400px; border-radius:8px; border:1px solid #ddd;">
+            </iframe>
+        }
+        @if(t.url != null)
+        {
+        <div class="d-flex justify-content-center p-4">
+            <iframe width="560" height="315"
+                src="@t.url"
+                title="YouTube video player"
+                style="border-radius: 15px;"
+                frameborder="0"
+                allowfullscreen>
+            </iframe>
+        </div> 
+        }
+        
+    </div>
+    <hr class="hr"/>
+}
+
+@* @for (int i = 0; i < 10; i++)
+{
+    <p>Esse é um vídeo clássico pra quem está começando no 3D com Blender. Siga passo a passo e faça seu primeiro projeto usando esse software maravilhoso!</p>
+    <div class="d-flex justify-content-center p-4">
+	<iframe width="560" height="315"
+        src="https://www.youtube.com/embed/4haAdmHqGOw?si=mF_kLUhtj1oMd9Yf"
+        title="YouTube video player"
+        style="border-radius: 15px;"
+        frameborder="0"
+        allowfullscreen>
+</iframe>
+
+</div>
+
+ *@
+
+
+

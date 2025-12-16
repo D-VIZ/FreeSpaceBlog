@@ -1,0 +1,33 @@
+﻿@page
+@model FreeSpace.Pages.Posts.Tutoriais.CreateModel
+@using Microsoft.AspNetCore.Authorization;
+@attribute [Authorize(Roles = "Admin")]
+@{
+	ViewData["Title"] = "Adicionar Tutoriais";
+}
+
+<form method="post" enctype="multipart/form-data">
+	<div class="">
+		<div>
+			<label asp-for="Tutoriais.Description" class="form-label"></label>
+			<textarea asp-for="Tutoriais.Description" class="form-control" rows="5" type="text"></textarea>
+			<span asp-validation-for="Tutoriais.Description" class="text-danger"></span>
+		</div>
+		<div>
+			<label asp-for="Tutoriais.url" class="form label"></label>
+			<input asp-for="Tutoriais.url" class="form-control form-control-sm"/>
+			<span asp-validation-for="Tutoriais.url" class="text-danger"></span>
+		</div>
+		<div class="d-flex">
+			<div class="col-5">
+				<label asp-for="Tutoriais.Plataform" class="form-label"></label>
+				<select asp-for="Tutoriais.Plataform" asp-items="Model.Plataformas" class="form-select form-select-sm"></select>
+			</div>
+			<div class="ms-auto">
+				<label asp-for="Tutoriais.Media" class="form-label">Arquivo</label>
+				<input asp-for="Tutoriais.Media" class="form-control form-control-sm" type="file" id="formFile" accept=".pdf,.txt">
+			</div>
+		</div>
+		<button type="submit" class="button-send mt-3">Criar</button>
+	</div>
+</form>

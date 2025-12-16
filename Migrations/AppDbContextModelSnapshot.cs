@@ -188,6 +188,36 @@ namespace FreeSpace.Migrations
                     b.ToTable("Posts");
                 });
 
+            modelBuilder.Entity("FreeSpace.Models.Tutorials", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
+
+                    b.Property<DateTime>("CreatedDate")
+                        .HasColumnType("datetime2");
+
+                    b.Property<string>("Description")
+                        .IsRequired()
+                        .HasMaxLength(1000)
+                        .HasColumnType("nvarchar(1000)");
+
+                    b.Property<string>("FilePath")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("Plataform")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("url")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.HasKey("Id");
+
+                    b.ToTable("Tutorials");
+                });
+
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityRole", b =>
                 {
                     b.Property<string>("Id")
@@ -345,7 +375,7 @@ namespace FreeSpace.Migrations
             modelBuilder.Entity("FreeSpace.Models.Like", b =>
                 {
                     b.HasOne("FreeSpace.Models.Post", "Post")
-                        .WithMany("LikesList")
+                        .WithMany("Likes")
                         .HasForeignKey("PostId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
@@ -423,7 +453,7 @@ namespace FreeSpace.Migrations
                 {
                     b.Navigation("Comments");
 
-                    b.Navigation("LikesList");
+                    b.Navigation("Likes");
                 });
 #pragma warning restore 612, 618
         }

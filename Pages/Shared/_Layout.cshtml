@@ -28,16 +28,16 @@
                         aria-expanded="false" aria-label="Toggle navigation">
                     <span class="navbar-toggler-icon"></span>
                 </button>
-@*                 <div class="navbar-collapse collapse d-sm-inline-flex justify-content-between">
+                <div class="navbar-collapse collapse d-sm-inline-flex justify-content-between">
                     <ul class="navbar-nav flex-grow-1">
                         <li class="nav-item">
-                            <a class="nav-link text-dark" asp-area="" asp-page="/Index">Home</a>
+                            <a class="nav-link text-light" asp-area="" asp-page="/Index">Home</a>
                         </li>
                         <li class="nav-item">
-                            <a class="nav-link text-dark" asp-area="" asp-page="/Privacy">Privacy</a>
+                            <a class="nav-link text-light" asp-area="" asp-page="/Tutoriais/Index">Tutoriais</a>
                         </li>
                     </ul>
-                </div> *@
+                </div>
                 @if(!SignInManager.IsSignedIn(User))
                 {
                     <div>
@@ -48,7 +48,7 @@
                 else
                 {
                     <div class="d-flex align-items-center gap-2">
-                        <a class="nav-link d-inline-flex align-items-center p-0" asp-route-id="@currentUser?.Id" asp-page="/Posts/Profile">
+                        <a class="nav-link d-inline-flex align-items-center p-0" asp-route-id="@currentUser?.Id" asp-page="/Profile">
                                 <img src="@currentUser?.PhotoPath" alt="Avatar" style="width:45px; height:45px;" class="rounded-circle ">
                                 <span class="user-name txt-p2 nav-link">@User.Identity?.Name</span>
                         </a>
@@ -58,11 +58,12 @@
                     </div>     
                 }
 
+
             </div>
         </nav>
     </header>
     <div class="container d-flex justify-content-center">
-        <main role="main" class="pb-3 col-12 col-md-8 col-lg-6 ">
+        <main role="main" class="pb-3 col-12 col-md-8 col-lg-7 ">
             @RenderBody()
         </main>
     </div>

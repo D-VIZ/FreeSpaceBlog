@@ -1,0 +1,53 @@
+﻿@page
+@model FreeSpace.Pages.Posts.Tutoriais.ViewModel
+@using Microsoft.AspNetCore.Authorization;
+@attribute [Authorize(Roles = "Admin")]
+@{
+    ViewData["Title"] = "Editar Tutoriais";
+}
+
+<div class="">
+    <h1>@ViewData["Title"]</h1>
+
+<div class="mt-4 mb-4">
+    <a class="btn btn-primary" asp-page="./Create">Novo tutorial</a>
+</div>
+
+
+<table class="table text-white" style="table-layout: fixed; width: 100%;">
+    <thead>
+        <tr>
+            <th style="width: 45%;">
+                @Html.DisplayNameFor(model => model.tutoriais[0].Description)
+            </th>
+            <th style="width: 15%;">
+                @Html.DisplayNameFor(model => model.tutoriais[0].Plataform)
+            </th>
+            <th style="width: 30%;">
+                @Html.DisplayNameFor(model => model.tutoriais[0].url)
+            </th>
+            <th style="width: 10%;">Ações</th>
+        </tr>
+    </thead>
+    <tbody>
+
+    @foreach (var t in Model.tutoriais)
+    {
+    <tr>
+        <td style="word-wrap: break-word;">@t.Description</td>
+        <td>@t.Plataform</td>
+        <td style="word-wrap: break-word;">@t.url</td>
+        <td>
+            <a class="btn btn-primary btn-sm" asp-page="./Edit" asp-route-id="@t.Id">Editar</a>
+            <form method="post" asp-route-handler="Delete" asp-route-id="@t.Id">
+                <button class="btn btn-danger btn-sm mt-2" type="submit">Excluir</button>
+            </form>
+                
+        </td>
+    </tr>
+    }
+    </tbody>
+</table>
+
+
+</div>
