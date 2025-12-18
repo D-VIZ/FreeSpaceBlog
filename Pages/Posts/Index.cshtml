@@ -1,0 +1,212 @@
+﻿@page "{id:int}"
+@model FreeSpace.Pages.Posts.IndexModel
+@using Microsoft.AspNetCore.Identity
+@inject SignInManager<FreeSpace.Models.ApplicationUser> SignInManager
+@inject UserManager<FreeSpace.Models.ApplicationUser> UserManager
+@Html.AntiForgeryToken()
+@{
+	ViewData["Title"] = "Post";
+	var post = Model.post;
+}
+
+<div>
+        <div class="d-flex gap-2 mb-2 align-items-center">
+            <a class="text-decoration-none" asp-page="/Profile" asp-route-id="@post.UserId">
+                <img src="@(!string.IsNullOrEmpty(post.User.PhotoPath) ? post.User.PhotoPath : "/userDefault.jpg")" alt="Image" class="rounded-circle me-2" style="max-width: 50px; max-height: 50px;"/>
+            </a>
+
+            <p><small><b>@post.User?.UserName</b></small></p>
+            
+            @{
+                string classeTag = post.Tag switch
+                {
+                    "Geral" => "tag-geral",
+                    "Erro" => "tag-erro",
+                    "Dúvida" => "tag-duvida",
+                    "Projeto Final" => "tag-projeto",
+                    "Notícia" => "tag-noticia",
+                    "Discussão" => "tag-discussao",
+                    "Estudo" => "tag-estudo",
+                    "Tutorial" => "tag-tutorial",
+                    _          => "tag-geral"
+                };
+                string tagImgPath = post.Tag switch
+                {
+                    "Geral" => "/icon/tag-geral.png",
+                    "Erro" => "/icon/tag-erro.png",
+                    "Dúvida" => "/icon/tag-duvida.png",
+                    "Projeto Final" => "/icon/tag-projeto.png",
+                    "Notícia" => "/icon/tag-noticia.png",
+                    "Discussão" => "/icon/tag-discussao.png",
+                    "Estudo" => "/icon/tag-estudo.png",
+                    "Tutorial" => "/icon/tag-tutorial.png",
+                    _ => "/icon/tag-geral.png"
+                };
+                 
+                string icoPath = post.Plataform switch
+                {
+                    "Blender" => "/icon/blender.png",
+                    "Autodesk Maya" => "/icon/maya.png",
+                    "Autodesk 3ds Max" => "/icon/3ds.png",
+                    "Cinema 4D" => "/icon/cinema4d.png",
+                    "ZBrush" => "/icon/zbrush.png",
+                    "Houdini" => "/icon/houdinpost.png",
+                    "SketchUp" => "/icon/sketchup.ico",
+                    "Modo" => "/icon/modo.png",
+                    "LightWave 3D" => "/icon/lightwave.png",
+                    "Rhinoceros (Rhino)" => "/icon/rhino.png",
+                    "Substance Painter" => "/icon/substance.png",
+                    "Unreal Engine" => "/icon/unreal.png",
+                    "Unity" => "/icon/unity.png",   
+                    "Marmoset Toolbag" => "/icon/marmoset.png",
+                    "Não especificado" => "/icon/tag-projeto.png",
+                    _ => "/icon/tag-projeto.png"
+                };
+        
+
+            }
+
+            <div class="inline-row">
+                <form method="post" asp-page-handler="FollowPost" asp-route-id="@post.Id" class="m-0 p-0">
+                    <button type="submit" class="follow">
+                        @if(!post.Followers.Any(p => p.UserId == UserManager.GetUserId(User)))
+                        {
+                            <img class="tag-img" src="/icon/follow-icon-1.png" alt="follow" />
+                            <span class="small">Follow Post</span>
+                        }
+                        else
+                        {
+                            <img class="tag-img" src="/icon/follow-icon-2.png" alt="unfollow" />
+                            <span class="small">Unfollow Post</span>
+                        }
+                    </button>
+                </form>
+
+                <div class="tag @classeTag">
+                    <img src="@tagImgPath" alt="tag" class="tag-img" />
+                    <span>@post.Tag</span>
+                </div>
+
+                @if(post.Plataform != "Não especificado" && post.Plataform != null)
+                {
+                    <div class="tag tag-sft">
+                        <img src="@icoPath" alt="plataform" class="tag-img" />
+                        <span>@post.Plataform</span>
+                    </div>
+                }
+            </div>
+            
+
+
+            @if(post.CreatedDate.Date == DateTime.Today)
+            {
+                <div  class="col text-end text-muted">
+                    <p><small>@post.CreatedDate.ToString("HH:mm")</small></P>
+                </div>
+
+            }
+            else
+            {   
+                <div  class="col text-end text-muted">
+                    <p><small>@post.CreatedDate.ToString("dd/MM/yy")</small></p>
+                </div>
+
+            }
+
+        </div>
+        <div class="fw-bold mb-2 fs-4">
+            @Html.DisplayFor(p => post.Title)
+        </div> 
+        <div class="mb-3 fs-6">
+            @Html.DisplayFor(p => post.Description)
+        </div>
+        @if(post.MediaPath != null)
+        {
+            var ext = System.IO.Path.GetExtension(post.MediaPath).ToLower();
+            if (ext == ".jpg" || ext == ".jpeg" || ext == ".png" || ext == ".gif")
+            {
+                <div class="mb-3 d-flex justify-content-center align-items-center min-vh-10 bg-post img-fluid rounded-4">
+                    <img src="@post.MediaPath" alt="Image" class="img-fluid rounded-3 w-100" style=" object-fit: contain; max-width: 760px; max-height: 650px; " />
+                </div>
+            }
+            else if (ext == ".mp4" || ext == ".webm" || ext == ".ogg")
+            {
+                <div class="mb-3 d-flex justify-content-center align-items-center min-vh-10 bg-post img-fluid rounded-4">
+                    <video controls width="760" height="650" class="w-100">
+                        <source src="@post.MediaPath" type="video/mp4"/>
+                     </video>
+                </div>
+            }
+        }
+
+        <div class="d-flex gap-2 mb-2 align-items-center">
+            <form method="post" asp-page-handler="Like" asp-route-id="@post.Id">
+                <button id="likeBtn" type="submit" class="btn p-0 border-0 bg-transparent">
+                    @if(post.Likes.Any(p => p.UserId == UserManager.GetUserId(User)))
+                    {
+                        <img src="/imgsLayout/heart-filled.png" style="width:25px; height:25px;" />
+                    }
+                    else
+                    {
+                        <img src="/imgsLayout/heart-empty.png" style="width:25px; height:25px;" />
+                    }
+                    
+                </button>
+            </form>
+            <span>@post.Likes.Count()</span>
+            <button id="commentBtn" type="button" onclick="toggleComment(@post.Id)" class="btn ms-3 p-0 border-0 bg-transparent">
+                <img src="/imgsLayout/CommentWhite.png" style="width:25px; height:25px;" />
+            </button>
+            <span>@post.Comments.Count()</span>
+            @if(post.UserId == UserManager.GetUserId(User) || User.IsInRole("Admin"))
+            {
+                <div class="col text-end">
+                    <form method="post" asp-page-handler="Delete" asp-route-id="@post.Id">
+                        <input type="submit" value="Excluir" class="button-delete"/>
+                    </form> 
+                </div>
+            }
+
+        </div>
+                <div id="commentBox-@post.Id" style="display:block;" class="mt-3">
+
+                @if (post.Comments != null && post.Comments.Any())
+                {
+                    @foreach (var c in post.Comments.OrderByDescending(c => c.CreatedDate))
+                    {
+                        <div class="mb-2">
+                            <a class="text-decoration-none" asp-page="./Profile" asp-route-id="@c.UserId">
+                                <img src="@(!string.IsNullOrEmpty(c.User.PhotoPath) ? c.User.PhotoPath : "/userDefault.jpg")" alt="Image" class="rounded-circle me-2" style="max-width: 50px; max-height: 50px;"/>
+                            </a>
+                            <span>@c.User?.UserName</span>
+                            <div class="mt-2">@c.Text</div>
+                            <small class="text-muted">@c.CreatedDate.ToString("g")</small>
+                            <hr />
+                        </div>
+                    }
+                }
+                else
+                {
+                    <p class="text-muted">Sem comentários</p>
+                }
+                    
+                    <form method="post" asp-page-handler="AddComment" asp-route-id="@post.Id">
+                        <textarea name="CommentText" maxlength="300" style="resize:none; width:600px;" class="form-control col-3" rows="5" placeholder="Escreva seu comentário..."></textarea>
+                        <button type="submit" class="button-send mt-3">Enviar</button>
+                        <span asp-validation-for="CommentText" class="text-danger"></span>
+                    </form>
+                </div>
+
+        </div>
+
+
+    <hr class="hr"/>
+
+
+                        
+<script>
+    function toggleComment(postId) {
+        const box = document.getElementById("commentBox-" + postId);
+        box.style.display = box.style.display === "none" ? "block" : "none";
+    }
+</script>

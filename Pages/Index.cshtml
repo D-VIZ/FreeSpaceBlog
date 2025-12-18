@@ -8,6 +8,78 @@
     ViewData["Title"] = "Home";
 }
 
+@section LeftSideBar{
+    <div class="side-bar side-bar-left">
+        <div class="side-bar-content">
+            <div class = "inline-row mb-2">
+                <img src="/icon/follow-icon-2.png" style="width: 25px; height: 25px;" class="me-1"/>
+                <p>Posts Seguidos</p>
+            </div>
+            
+            <ul class="list-group list-group-flush">
+                @foreach (var i in Model.FPosts)
+                {
+                 
+                    <li class="list-group-item bg-transparent text-light border-secondary">
+                        <div class = "inline-row">
+                            
+                            <div class="me-2">
+                                <img src="/imgsLayout/heart-filled.png" style="width:18px; height:18px; margin-right: 3px;"/>
+                                @i.Likes.Count()
+                            </div>
+                            <div class="me-3">
+                                <img src="/imgsLayout/CommentPurple.png" style="width:18px; height:18px; margin-right: 3px;"/>
+                                @i.Comments.Count()
+                            </div>
+                            <div class="sidebar-post-title">
+                                <a asp-page="/Posts/Index" asp-route-id="@i.Id" class="txt-p2">@i.Title</a> 
+                            </div>
+                            
+                        </div> 
+                    </li>
+ 
+                }
+            </ul>
+        </div>
+    </div>
+    
+}
+
+@section RightSideBar{
+    <div class="side-bar-2 side-bar-right">
+        <div class="side-bar-content">
+            <div class = "inline-row mb-2">
+                <img src="/icon/fire-icon.png" style="width: 25px; height: 25px;" class="me-1"/>
+                <b>Top 10 Posts</b>
+            </div>
+            
+            <ul class="list-group list-group-flush">
+                @foreach (var i in Model.LPosts)
+                {
+                 
+                    <li class="list-group-item bg-transparent text-light border-secondary">
+                        <div class = "inline-row">
+                            
+                            <div class="me-2">
+                                <img src="/imgsLayout/heart-filled.png" style="width:18px; height:18px; margin-right: 3px;"/>
+                                @i.Likes.Count()
+                            </div>
+                            <div class="me-3">
+                                <img src="/imgsLayout/CommentPurple.png" style="width:18px; height:18px; margin-right: 3px;"/>
+                                @i.Comments.Count()
+                            </div>
+                            <div class="sidebar-post-title">
+                                <a asp-page="/Posts/Index" asp-route-id="@i.Id" class="txt-p2">@i.Title</a> 
+                            </div>
+                            
+                        </div> 
+                    </li>
+                }
+            </ul>
+        </div>
+    </div>
+}
+
 <form method="post" enctype="multipart/form-data">
 
     <div>
@@ -117,19 +189,34 @@
 
             }
 
-            <div class="d-flex">
+            <div class="inline-row">
+                <form method="post" asp-page-handler="FollowPost" asp-route-id="@i.Id" class="m-0 p-0">
+                    <button type="submit" class="follow">
+                        @if(!i.Followers.Any(p => p.UserId == UserManager.GetUserId(User)))
+                        {
+                            <img class="tag-img" src="/icon/follow-icon-1.png" alt="follow" />
+                            <span class="small">Follow Post</span>
+                        }
+                        else
+                        {
+                            <img class="tag-img" src="/icon/follow-icon-2.png" alt="unfollow" />
+                            <span class="small">Unfollow Post</span>
+                        }
+                    </button>
+                </form>
+
                 <div class="tag @classeTag">
-                    <img src="@tagImgPath" alt="Image" class="tag-img"/>
-                    <span>@i.Tag</span> 
+                    <img src="@tagImgPath" alt="tag" class="tag-img" />
+                    <span>@i.Tag</span>
                 </div>
+
                 @if(i.Plataform != "Não especificado" && i.Plataform != null)
                 {
-                    <div class="tag tag-sft ms-3">
-                        <img src="@icoPath" alt="Image" class="tag-img"/>
-                        <span>@i.Plataform</span> 
-                    </div>    
+                    <div class="tag tag-sft">
+                        <img src="@icoPath" alt="plataform" class="tag-img" />
+                        <span>@i.Plataform</span>
+                    </div>
                 }
-                                   
             </div>
             
 

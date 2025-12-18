@@ -47,5 +47,7 @@ namespace FreeSpace.Models
         public ICollection<Comment> Comments { get; set; } = new List<Comment>();
 
         public ICollection<Like> Likes { get; set; } = new List<Like>();
+
+        public ICollection<FollowedPost> Followers { get; set; } = new List<FollowedPost>();
     }
 }

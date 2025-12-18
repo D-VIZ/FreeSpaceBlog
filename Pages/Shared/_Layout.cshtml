@@ -62,10 +62,53 @@
             </div>
         </nav>
     </header>
-    <div class="container d-flex justify-content-center">
-        <main role="main" class="pb-3 col-12 col-md-8 col-lg-7 ">
-            @RenderBody()
-        </main>
+
+    <!-- Pseudocode / Plan:
+         1. Replace the single centered container with a Bootstrap row having three columns:
+            - Left sidebar column (hidden on small screens) that renders optional section "LeftSidebar".
+            - Center column that contains the original <main> unchanged (exact same markup).
+            - Right sidebar column (hidden on small screens) that renders optional section "RightSidebar".
+         2. Use responsive classes so sidebars collapse on small screens (d-none d-md-block).
+         3. Allow pages to provide sidebar content by defining Razor sections "LeftSidebar" and "RightSidebar" (not required).
+    -->
+
+    <div class="container">
+        <div class="row">
+            <!-- Left sidebar: hidden on small devices, optional content via section "LeftSidebar" -->
+            <aside class="col-12 col-md-3 d-none d-md-block">
+                @if (IsSectionDefined("LeftSidebar"))
+                {
+                    @RenderSection("LeftSidebar", required: false)
+                }
+                else
+                {
+                    <!-- optional default left content -->
+                    <div class="pt-3">
+                        <!-- leave empty or add default widgets -->
+                    </div>
+                }
+            </aside>
+
+            <!-- Center column: KEEP THIS MAIN EXACTLY AS BEFORE -->
+            <main role="main" class="pb-3 col-12 col-md-6">
+                @RenderBody()
+            </main>
+
+            <!-- Right sidebar: hidden on small devices, optional content via section "RightSidebar" -->
+            <aside class="col-12 col-md-3 d-none d-md-block">
+                @if (IsSectionDefined("RightSidebar"))
+                {
+                    @RenderSection("RightSidebar", required: false)
+                }
+                else
+                {
+                    <!-- optional default right content -->
+                    <div class="pt-3">
+                        <!-- leave empty or add default widgets -->
+                    </div>
+                }
+            </aside>
+        </div>
     </div>
 
     <footer class="border-top footer text-muted">

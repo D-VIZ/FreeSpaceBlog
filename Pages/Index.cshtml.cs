@@ -21,13 +21,15 @@ namespace FreeSpace.Pages
         private readonly SignInManager<ApplicationUser> _signInManager;
         private readonly UserManager<ApplicationUser> _userManager;
 
-        public IndexModel(AppDbContext context, SignInManager<ApplicationUser> signInManager, UserManager<ApplicationUser> userManager)
+        public IndexModel(
+            AppDbContext context,
+            SignInManager<ApplicationUser> signInManager,
+            UserManager<ApplicationUser> userManager)
         {
             _context = context;
             _signInManager = signInManager;
             _userManager = userManager;
         }
-
 
         [BindProperty]
         public Post Post { get; set; } = default!;
@@ -37,13 +39,26 @@ namespace FreeSpace.Pages
 
         public IList<Post> Posts { get; set; } = new List<Post>();
 
+        public IList<Post> FPosts { get; set; } = new List<Post>();
+
+        public IList<Post> LPosts { get; set; } = new List<Post>();
+
         public Comment Comment { get; set; } = default!;
 
         public Like Like { get; set; } = default!;
 
-        public SelectList Tags { get; set; } = new SelectList(new List<string> {"Geral", "Erro", "Dúvida", "Projeto Final", "Notícia", "Discussão","Estudo", "Tutorial"});
+        public FollowedPost FollowedPost { get; set; } = default!;
 
-        public SelectList Plataformas = new SelectList(new List<string> {"Não especificado",
+        public int TopCount { get; set; } = 10;
+
+        public SelectList Tags { get; set; } = new SelectList(new List<string>
+        {
+            "Geral", "Erro", "Dúvida", "Projeto Final", "Notícia", "Discussão", "Estudo", "Tutorial"
+        });
+
+        public SelectList Plataformas { get; set; } = new SelectList(new List<string>
+        {
+            "Não especificado",
             "Blender",
             "Autodesk Maya",
             "Autodesk 3ds Max",
@@ -57,7 +72,8 @@ namespace FreeSpace.Pages
             "Substance Painter",
             "Unreal Engine",
             "Unity",
-            "Marmoset Toolbag" });
+            "Marmoset Toolbag"
+        });
 
         public async Task OnGetAsync()
         {
@@ -66,7 +82,6 @@ namespace FreeSpace.Pages
 
         public async Task<IActionResult> OnPostAsync()
         {
-            
             if (!User.Identity.IsAuthenticated)
             {
                 return RedirectToPage("/Account/Login", new { area = "Identity" });
@@ -82,7 +97,8 @@ namespace FreeSpace.Pages
                 await RefreshInfo();
                 return Page();
             }
-            if(Post.Media != null)
+
+            if (Post.Media != null)
             {
                 var fileName = Guid.NewGuid() + Path.GetExtension(Post.Media.FileName);
                 var filePath = Path.Combine("wwwroot/uploads/" + fileName);
@@ -92,11 +108,11 @@ namespace FreeSpace.Pages
 
                 Post.MediaPath = "/uploads/" + fileName;
             }
-            if(Post.UserId == null)
+
+            if (Post.UserId == null)
             {
                 Post.Title = "UserId nao associado";
             }
-
 
             _context.Posts.Add(Post);
             await _context.SaveChangesAsync();
@@ -125,16 +141,17 @@ namespace FreeSpace.Pages
 
         public async Task<IActionResult> OnPostLike(int id)
         {
-            if(!User.Identity.IsAuthenticated)
+            if (!User.Identity.IsAuthenticated)
             {
                 return RedirectToPage("/Account/Login", new { area = "Identity" });
             }
 
             var userId = _userManager.GetUserId(User);
 
-            var like = await _context.Likes.FirstOrDefaultAsync(l => l.PostId == id && l.UserId == userId);
+            var like = await _context.Likes
+                .FirstOrDefaultAsync(l => l.PostId == id && l.UserId == userId);
 
-            if(like != null)
+            if (like != null)
             {
                 _context.Likes.Remove(like);
             }
@@ -150,7 +167,6 @@ namespace FreeSpace.Pages
 
             await _context.SaveChangesAsync();
             return RedirectToPage();
-
         }
 
         public async Task<IActionResult> OnPostAddCommentAsync(int id)
@@ -162,13 +178,13 @@ namespace FreeSpace.Pages
                 return RedirectToPage("/Account/Login", new { area = "Identity" });
             }
 
-
             if (string.IsNullOrWhiteSpace(CommentText))
             {
                 ModelState.AddModelError(nameof(CommentText), "Comentário não pode ficar vazio.");
                 await RefreshInfo();
                 return Page();
             }
+
             if (CommentText.Length > 300)
             {
                 ModelState.AddModelError(nameof(CommentText), "O comentário não pode ter mais de 300 caracteres.");
@@ -176,7 +192,7 @@ namespace FreeSpace.Pages
                 return Page();
             }
 
-            Post post = await _context.Posts.FindAsync(id);
+            var post = await _context.Posts.FindAsync(id);
 
             Comment = new Comment
             {
@@ -186,7 +202,6 @@ namespace FreeSpace.Pages
                 PostId = id
             };
 
-
             _context.Comments.Add(Comment);
             await _context.SaveChangesAsync();
 
@@ -195,10 +210,86 @@ namespace FreeSpace.Pages
             return RedirectToPage();
         }
 
+        public async Task<IActionResult> OnPostFollowPost(int id)
+        {
+            if (!User.Identity.IsAuthenticated)
+            {
+                return RedirectToPage("/Account/Login", new { area = "Identity" });
+            }
+
+            var userId = _userManager.GetUserId(User);
+
+            var post = new Post
+            {
+                Id = id
+            };
+
+            if (post == null)
+            {
+                return Page();
+            }
+
+            await RefreshInfo();
+
+            var follow = _context.FollowedPosts.FirstOrDefault(p => p.PostId == id && p.UserId == userId);
+
+            if(follow == null)
+            {
+                follow = new FollowedPost
+                {
+                    PostId = id,
+                    UserId = _userManager.GetUserId(User),
+                    LastRead = DateTime.Now
+                };
+                _context.FollowedPosts.Add(follow);
+            }
+            else
+            {
+                _context.FollowedPosts.Remove(follow);
+            }
+
+            await _context.SaveChangesAsync();
+
+            return RedirectToPage();
+        }
+
         private async Task RefreshInfo()
         {
-            Posts = await _context.Posts.Include(p => p.User).Include(p => p.Comments).ThenInclude(c => c.User).Include(p => p.Likes).ThenInclude(l => l.User).OrderByDescending(p => p.CreatedDate).ToListAsync();
+            Posts = await _context.Posts
+                .Include(p => p.User)
+                .Include(p => p.Comments)
+                    .ThenInclude(c => c.User)
+                .Include(p => p.Likes)
+                    .ThenInclude(l => l.User)
+                .Include(f => f.Followers)
+                    .ThenInclude(p => p.User)
+                .OrderByDescending(p => p.CreatedDate)
+                .ToListAsync();
 
+            LPosts = await _context.Posts
+                .Include(p => p.User)
+                .Include(p => p.Comments)
+                    .ThenInclude(c => c.User)
+                .Include(p => p.Likes)
+                    .ThenInclude(l => l.User)
+                .Include(f => f.Followers)
+                    .ThenInclude(p => p.User)
+                .OrderByDescending(p => p.Likes.Count())
+                .Take(TopCount)
+                .ToListAsync();
+
+            FPosts = await _context.FollowedPosts
+                .Where(fp => fp.UserId == _userManager.GetUserId(User))
+                .Include(fp => fp.Post)
+                    .ThenInclude(p => p.User)
+                .Include(fp => fp.Post)
+                    .ThenInclude(p => p.Comments)
+                .Include(fp => fp.Post)
+                    .ThenInclude(p => p.Likes)
+                .Where(fp => fp.Post != null)
+                .Select(fp => fp.Post!)
+                .OrderByDescending(p => p.Likes.Count)
+                .ToListAsync();
         }
     }
 }

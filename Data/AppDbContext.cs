@@ -14,5 +14,6 @@ namespace FreeSpace.Data
         public DbSet<Comment> Comments { get; set; } = default!;
         public DbSet<Like> Likes { get; set; } = default!;
         public DbSet<Tutorials> Tutorials { get; set; } = default!;
+        public DbSet<FollowedPost> FollowedPosts { get; set; } = default!;
     }
 }
